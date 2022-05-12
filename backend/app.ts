@@ -5,6 +5,7 @@ import * as winston from "winston";
 import * as expressWinston from "express-winston";
 import cors from "cors";
 import { CommonRoutesConfig } from "./common/common.routes.config";
+import { OrdersRoutes } from "./orders/orders.routes.config";
 import debug from "debug";
 
 const app: express.Application = express();
@@ -36,6 +37,10 @@ if (!process.env.DEBUG) {
 
 // initialize the logger with the above configuration
 app.use(expressWinston.logger(loggerOptions));
+
+// Adding the OrdersRoutes to our array,
+// after sending the Express.js application object to have the routes added to our app!
+routes.push(new OrdersRoutes(app));
 
 // this is a simple route to make sure everything is working properly
 const runningMessage = `Server running at http://localhost:${port}`;
