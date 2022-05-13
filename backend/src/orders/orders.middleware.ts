@@ -14,11 +14,11 @@ class OrdersMiddleware {
     }
 
     async validateOrderExists(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const order = await orderService.readById(req.params.orderId);
+        const order = await orderService.readById(req.params.id);
         if (order) {
             next();
         } else {
-            res.status(404).send({error: `Order ${req.params.orderId} not found`});
+            res.status(404).send({error: `Order ID ${req.params.id} not found`});
         }
     }
 

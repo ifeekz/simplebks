@@ -1,6 +1,5 @@
 import express from 'express';
 import ordersService from './orders.service';
-import UsersMiddleware from './orders.middleware';
 import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:orders-controller');
