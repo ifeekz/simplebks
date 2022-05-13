@@ -1,40 +1,69 @@
-import {OrderDto} from "./order.dto";
-import debug from 'debug';
+import { OrderDto } from "./order.dto";
+import debug from "debug";
+import { DbManager } from "../common/common.db.config";
+import { Collection } from "mongodb";
 
-const log: debug.IDebugger = debug('app:in-memory-dao');
+const log: debug.IDebugger = debug("app:in-memory-dao");
 
-class OrdersDao {
-    orders: Array<OrderDto> = [];
+class OrdersDao extends DbManager {
+  // orders: Array<OrderDto> = [];
+  orders: Collection | undefined;
 
-    constructor() {
-        log('Created new instance of OrdersDao');
-    }
+  constructor() {
+    super();
+    log("Created new instance of OrdersDao");
+  }
 
-    async getOrders() {
-        return this.orders;
-    }
+  collection() {
+    this.orders = this.db?.collection("orders");
+    return this.orders;
+  }
+  async getOrders() {
+    // return this.orders
+    const orders = await this.orders
+      ?.find({}, {})
+      .limit(10)
+      .toArray()
+      .then((results: any) => {
+        return results;
+      })
+      .catch((error: any) => log(error));
 
-    async addOrder(order: OrderDto) {
-        this.orders.push(order);
-        return order.id;
-    }
+    return orders;
+  }
 
-    async getOrderById(orderId: string) {
-        return this.orders.find((order: { id: string; }) => order.id === orderId);
-    }
+  async addOrder(order: OrderDto) {
+    return [];
+  }
 
-    async updateOrderById(order: OrderDto) {
-        const objIndex = this.orders.findIndex((obj: { id: string; }) => obj.id === order.id);
-        this.orders.splice(objIndex, 1, order);
-        return `${order.id} updated via put`;
-    }
+  async getOrderById(orderId: string) {
+    return this.orders
+      ?.findOne({ order_id: orderId })
+      .then((result) => {})
+      .catch((error) => log(error));
+  }
 
+  async updateOrderById(order: OrderDto) {
+    return this.orders
+      ?.findOneAndUpdate(
+        { order_id: order.order_id },
+        {
+          $set: {
+            price: order.price,
+            freight_value: order.freight_value,
+          },
+        }
+      )
+      .then((result) => {})
+      .catch((error) => log(error));
+  }
 
-    async deleteOrderById(orderId: string) {
-        const objIndex = this.orders.findIndex((obj: { id: string; }) => obj.id === orderId);
-        this.orders.splice(objIndex, 1);
-        return `${orderId} removed`;
-    }
+  async deleteOrderById(orderId: string) {
+    return this.orders
+      ?.deleteOne({ order_id: orderId })
+      .then((result) => {})
+      .catch((error) => log(error));
+  }
 }
 
 export default new OrdersDao();

@@ -7,12 +7,14 @@ import cors from "cors";
 import { CommonRoutesConfig } from "./common/common.routes.config";
 import { OrdersRoutes } from "./orders/orders.routes.config";
 import debug from "debug";
+import 'dotenv/config'
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
-const port = 3000;
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug("app");
+const HOST: string = process.env.HOST || "localhost";
+const PORT: number = Number(process.env.PORT) || 3000;
 
 // middleware to parse all incoming requests as JSON
 app.use(express.json());
@@ -43,12 +45,12 @@ app.use(expressWinston.logger(loggerOptions));
 routes.push(new OrdersRoutes(app));
 
 // this is a simple route to make sure everything is working properly
-const runningMessage = `Server running at http://localhost:${port}`;
+const runningMessage = `Server running at ${HOST}:${PORT}`;
 app.get("/", (req: express.Request, res: express.Response) => {
   res.status(200).send(runningMessage);
 });
 
-server.listen(port, () => {
+server.listen(PORT, () => {
   routes.forEach((route: CommonRoutesConfig) => {
     debugLog(`Routes configured for ${route.getName()}`);
   });

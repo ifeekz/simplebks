@@ -1,8 +1,10 @@
 export interface OrderDto {
    id: string;
-   email: string;
-   password: string;
-   firstName?: string;
-   lastName?: string;
-   permissionLevel?: number;
+   order_id: string;
+   order_item_id: string;
+   product_id: string;
+   seller_id: string;
+   shipping_limit_date: Date;
+   price: number;
+   freight_value: number;
 }
