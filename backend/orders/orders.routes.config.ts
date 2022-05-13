@@ -1,5 +1,7 @@
-import { CommonRoutesConfig } from "../common/common.routes.config";
 import express from "express";
+import { CommonRoutesConfig } from "../common/common.routes.config";
+import OrdersController from "./orders.controller";
+import OrdersMiddleware from "./orders.middleware";
 
 export class OrdersRoutes extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -8,30 +10,21 @@ export class OrdersRoutes extends CommonRoutesConfig {
 
   configureRoutes() {
     // request to /order_items
-    this.app
-      .route(`/order_items`)
-      .get((req: express.Request, res: express.Response) => {
-        res.status(200).send(`List all order items that belong to the logged in user`);
-      })
+    this.app.route(`/order_items`).get(OrdersController.listOrders);
 
-      // requests to all http verb with this patters /order_items/:id
-      this.app
+    // requests to all http verb with this patters /order_items/:id
+    this.app.param(`id`, OrdersMiddleware.extractOrderId);
+    this.app
       .route(`/order_items/:id`)
-      .all(
-        (
-          req: express.Request,
-          res: express.Response,
-          next: express.NextFunction
-        ) => {
-          next();
-        }
-      )
-      .get((req: express.Request, res: express.Response) => {
-        res.status(200).send(`GET an order item ${req.params.id} from the order items collection.`);
-      })
-      .delete((req: express.Request, res: express.Response) => {
-        res.status(200).send(`DELETE an order item ${req.params.id} from the order items collection.`);
-      });
+      .all(OrdersMiddleware.validateOrderExists)
+      .get(OrdersController.getOrderById)
+      .delete(OrdersController.deleteOrder);
+
+    this.app.put(`/order_items/:id`, [
+      OrdersMiddleware.validateRequiredOrderBodyFields,
+      OrdersController.updateOrder,
+    ]);
+
     return this.app;
   }
 }
