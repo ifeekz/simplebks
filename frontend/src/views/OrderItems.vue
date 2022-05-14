@@ -41,13 +41,15 @@ export default {
   },
   methods: {
     getOrderItems() {
-      OrderService.getAll()
+      const limit = this.$route.query.limit
+      const offset = this.$route.query.offset
+      OrderService.getAll(limit, offset)
         .then((response) => {
-          this.orders = response.data;
+          this.orders = response.data.data;
           console.log(response.data);
         })
         .catch((e) => {
-          console.log(e);
+          console.log('getOrderItems ERR: ', e);
         });
     },
   },

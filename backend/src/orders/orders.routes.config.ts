@@ -20,7 +20,7 @@ export class OrdersRoutes extends CommonRoutesConfig {
     this.app.param(`id`, OrdersMiddleware.extractOrderId);
     this.app
       .route(`/order_items/:id`)
-      .all(OrdersMiddleware.validateOrderExists)
+      .all([OrdersMiddleware.validateOrderExists, AuthMiddleware.validateUser])
       .get(OrdersController.getOrderById)
       .delete(OrdersController.deleteOrder);
 

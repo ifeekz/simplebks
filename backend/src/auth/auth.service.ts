@@ -1,6 +1,5 @@
 import debug from "debug";
 import { AuthInterface } from "./auth.interface";
-import { SellerDto } from "../sellers/seller.dto";
 import { DbManager } from "../common/common.db.config";
 import { Collection, Db, MongoClient } from "mongodb";
 

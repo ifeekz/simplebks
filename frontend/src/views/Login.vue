@@ -86,14 +86,17 @@ export default {
         if (this.seller.seller_id && this.seller.seller_zip_code_prefix) {
           this.$store.dispatch("auth/login", this.seller).then(
             () => {
-              this.$router.push("/profile");
+              this.$router
+                .push("/order_items")
+                .catch((failure) => console.log("failure: ", failure));
             },
             (error) => {
               this.loading = false;
+              console.log("error: ", error.response);
               this.message =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString();
+                error.response && error.response.data
+                  ? error.response.data.message
+                  : error.toString();
             }
           );
         }

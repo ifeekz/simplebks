@@ -1,6 +1,7 @@
 import express from "express";
 import authService from "./auth.service";
 import debug from "debug";
+import { Buffer } from 'buffer'
 
 const log: debug.IDebugger = debug("app:auth-middleware");
 class AuthMiddleware {

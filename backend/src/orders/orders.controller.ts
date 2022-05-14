@@ -6,21 +6,10 @@ import { MongoClient } from "mongodb";
 const log: debug.IDebugger = debug("app:orders-controller");
 class OrdersController {
   async listOrders(req: express.Request, res: express.Response) {
-    const orders = await ordersService.list(100, 0);
-    // const client = new MongoClient(process.env.DATABASE_URL || "");
-    // const connection = await client.connect();
-    // const db = connection.db(process.env.DATABASE_NAME || "");
-    // const collection = db.collection("orders");
-    // const orders = await collection
-    //   .find({}, {})
-    //   .limit(10)
-    //   .toArray()
-    //   .then((results: any) => {
-    //     console.log(results);
-    //     return results
-    //   })
-    //   .catch((error: any) => console.log(error));
-    // console.log("orders: ", orders);
+    const limit = !req.query.limit ? 20 : Number(req.query.limit);
+    const offet = !req.query.limit ? 0 : Number(req.query.offest);
+    const orders = await ordersService.list(limit, offet);
+    console.log('orders: ', orders)
     res.status(200).send(orders);
   }
 

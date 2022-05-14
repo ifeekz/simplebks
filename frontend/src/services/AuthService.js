@@ -7,7 +7,8 @@ class AuthService {
                 password: seller.seller_zip_code_prefix
             })
             .then(response => {
-                if (response.data.accessToken) {
+                console.log('response.data: ', response.data)
+                if (response.data) {
                     localStorage.setItem('seller', JSON.stringify(response.data));
                 }
                 return response.data;

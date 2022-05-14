@@ -3,7 +3,8 @@ import AuthHeader from './AuthHeader'
 
 class OrderService {
   getAll(limit = 20, offset = 0) {
-    return http.get(`/order_items?limit=${limit}&offset=${offset}`, { headers: AuthHeader() });
+    limit = (limit > 100) ? 100 : limit
+    return http.get(`/order_items?limit=${limit}&offset=${offset}`, { headers: AuthHeader });
   }
   get(id) {
     return http.get(`/order_items/${id}`, { headers: AuthHeader() });

@@ -1,10 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
 
-import Home from '../views/OrderItems';
-import Login from '../views/Login';
-import OrderDetails from '../views/OrderDetails';
-import EditOrderItem from '../views/EditOrderItem';
+import Home from '@/views/OrderItems';
+import Login from '@/views/Login';
+import OrderDetails from '@/views/OrderDetails';
+import EditOrderItem from '@/views/EditOrderItem';
 
 Vue.use(Router);
 export const router = new Router({
@@ -34,14 +34,14 @@ export const router = new Router({
     ]
 });
 
-router.beforeEach((to, from, next) => {
-    const publicPages = ['/login'];
-    const authRequired = !publicPages.includes(to.path);
-    const loggedIn = localStorage.getItem('seller');
+// router.beforeEach((to, from, next) => {
+//     const publicPages = ['/login'];
+//     const authRequired = !publicPages.includes(to.path);
+//     const loggedIn = localStorage.getItem('seller');
 
-    if (authRequired && !loggedIn) {
-        next('/login');
-    } else {
-        next();
-    }
-});
+//     if (authRequired && !loggedIn) {
+//         next('/login');
+//     } else {
+//         next();
+//     }
+// });

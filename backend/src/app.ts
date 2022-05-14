@@ -4,6 +4,7 @@ import * as http from "http";
 import * as winston from "winston";
 import * as expressWinston from "express-winston";
 import cors from "cors";
+// import expressValidator from "express-validator";
 import { CommonRoutesConfig } from "./common/common.routes.config";
 import { AuthRoutes } from "./auth/auth.routes.config";
 import { OrdersRoutes } from "./orders/orders.routes.config";
@@ -40,6 +41,8 @@ if (!process.env.DEBUG) {
 
 // initialize the logger with the above configuration
 app.use(expressWinston.logger(loggerOptions));
+
+// app.use(expressValidator)
 
 // Load modules Route
 routes.push(new AuthRoutes(app));
