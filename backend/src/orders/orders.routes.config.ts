@@ -1,5 +1,6 @@
 import express from "express";
 import { CommonRoutesConfig } from "../common/common.routes.config";
+import AuthMiddleware from "../auth/auth.middleware";
 import OrdersController from "./orders.controller";
 import OrdersMiddleware from "./orders.middleware";
 
@@ -10,7 +11,10 @@ export class OrdersRoutes extends CommonRoutesConfig {
 
   configureRoutes() {
     // request to /order_items
-    this.app.route(`/order_items`).get(OrdersController.listOrders);
+    this.app
+      .route(`/order_items`)
+      .all(AuthMiddleware.validateUser)
+      .get(OrdersController.listOrders);
 
     // requests to all http verb with this patters /order_items/:id
     this.app.param(`id`, OrdersMiddleware.extractOrderId);
