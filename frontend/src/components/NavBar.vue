@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand navbar-dark bg-dark px-5">
-    <a href class="navbar-brand" @click.prevent>SimpleBks</a>
+    <router-link :to="{ name: 'order-items' }" class="navbar-brand">SimpleBks</router-link>
     <div class="navbar-nav mr-auto">
       
     </div>

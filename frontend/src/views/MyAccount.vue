@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between">
           <h4>My Account</h4>
           <div>
-            <a :href="'/order_items'" class="btn btn-link"> Back </a>
+            <router-link :to="{ name: 'order-items' }">Back</router-link>
           </div>
         </div>
         <div v-if="currentSeller">
