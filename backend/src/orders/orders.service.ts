@@ -8,8 +8,8 @@ import { Collection, Db, MongoClient } from "mongodb";
 const log: debug.IDebugger = debug("app:in-memory-dao");
 
 class OrdersService extends DbManager implements OrdersInterface {
-  db: Db | undefined;
-  orders: Collection | undefined;
+  db!: Db;
+  orders!: Collection;
 
   constructor() {
     super();
@@ -28,65 +28,78 @@ class OrdersService extends DbManager implements OrdersInterface {
     }
   }
 
-  async list(limit: number = 20, offset: number = 0) {
-    // const orders = await this.orders
-    //   ?.aggregate([
-    //     { $unwind: "$order" },
-    //     {
-    //       $lookup: {
-    //         from: "products",
-    //         localField: "product_id",
-    //         foreignField: "product_id",
-    //         as: "product",
-    //       },
-    //     },
-    //     {
-    //       $unwind: "$product",
-    //     },
-    //     {
-    //       $project: {
-    //         id: "$order.order_item_id",
-    //         product_id: "$order.product_id",
-    //         product_category: "$product.product_category_name",
-    //         price: "$order.price",
-    //         date: "$order.shipping_limit_date",
-    //       },
-    //     },
-    //     { $limit: limit },
-    //   ])
-    //   .toArray()
-    //   .then((results: any) => {
-    //     return results;
-    //   })
-    //   .catch((error: any) => {
-    //     return error;
-    //   });
-
+  async list(
+    seller_id: string,
+    limit: number = 20,
+    offset: number = 0,
+    sort: string = "shipping_limit_date"
+  ) {
+    sort = sort === "price" ? "price" : "shipping_limit_date";
     const orders = await this.orders
-      ?.find({}, {})
-      // .skip(offset)
-      .limit(limit)
-      .toArray()
-      .then((results: any) => {
-        return results;
-      })
-      .catch((error: any) => log(error));
+      .aggregate([
+        { $match: { seller_id: seller_id } },
+        {
+          $lookup: {
+            from: "products",
+            localField: "product_id",
+            foreignField: "product_id",
+            as: "product",
+          },
+        },
+        { $unwind: "$product" },
+        {
+          $facet: {
+            metadata: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: 1 },
+                },
+              },
+            ],
+            data: [
+              { $sort: { [sort]: 1 } },
+              { $skip: offset },
+              { $limit: limit },
+              {
+                $project: {
+                  _id: 0,
+                  id: "$order_id",
+                  product_id: "$product_id",
+                  product_category: "$product.product_category_name",
+                  price: "$price",
+                  date: "$shipping_limit_date",
+                },
+              },
+            ],
+          },
+        },
+        {
+          $project: {
+            data: 1,
+            total: { $arrayElemAt: ["$metadata.total", 0] },
+          },
+        },
+      ])
+      .toArray();
 
     offset = offset + limit;
-    const data = {
-      data: orders,
-      limit: limit,
-      offset: offset,
-    };
-    return data;
+    let result = orders[0];
+    result.limit = limit;
+    result.offset = offset;
+
+    return result;
   }
 
-  async create(resource: OrderDto) {
-    return OrdersDao.addOrder(resource);
-  }
-
-  async readById(resourceId: string) {
-    return OrdersDao.getOrderById(resourceId);
+  async readById(order_id: string) {
+    return this.orders
+      .findOne({ order_id: order_id })
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        return error;
+      });
   }
 
   async updateById(resource: OrderDto) {
@@ -94,7 +107,7 @@ class OrdersService extends DbManager implements OrdersInterface {
   }
 
   async deleteById(resourceId: string) {
-    return OrdersDao.deleteOrderById(resourceId);
+    this.orders.deleteOne({ order_id: resourceId });
   }
 }
 

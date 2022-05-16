@@ -19,6 +19,17 @@ export const auth = {
                 }
             );
         },
+        update_account({ commit }, seller) {
+            return AuthService.updateAccount(seller).then(
+                data => {
+                    commit('updateAccountSuccess', data);
+                    return Promise.resolve(data);
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+        },
         logout({ commit }) {
             AuthService.logout();
             commit('logout');
@@ -32,6 +43,10 @@ export const auth = {
         loginFailure(state) {
             state.status.loggedIn = false;
             state.seller = null;
+        },
+        updateAccountSuccess(state, data) {
+            state.seller.seller_city = data.seller_city;
+            state.seller.seller_state = data.seller_state;
         },
         logout(state) {
             state.status.loggedIn = false;

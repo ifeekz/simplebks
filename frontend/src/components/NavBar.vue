@@ -6,9 +6,9 @@
     </div>
     <div v-if="currentSeller" class="navbar-nav ml-auto">
       <li class="nav-item">
-        <router-link to="/" class="nav-link">
+        <router-link to="/account" class="nav-link">
           <font-awesome-icon icon="user" />
-          {{ currentSeller.seller_id }}
+          My Account
         </router-link>
       </li>
       <li class="nav-item">

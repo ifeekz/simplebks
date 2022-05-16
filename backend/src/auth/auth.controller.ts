@@ -24,6 +24,20 @@ class AuthController {
         .json({ status: false, message: "Something went wrong: " + error });
     }
   }
+
+  async updateAccount(req: express.Request, res: express.Response) {
+    try {
+      const response = await authService.updateAccount({
+        seller_id: req.user.seller_id,
+        ...req.body,
+      });
+      return res.status(200).send(response);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Something went wrong: " + error });
+    }
+  }
 }
 
 export default new AuthController();

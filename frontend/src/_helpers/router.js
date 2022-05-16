@@ -5,6 +5,7 @@ import Home from '@/views/OrderItems';
 import Login from '@/views/Login';
 import OrderDetails from '@/views/OrderDetails';
 import EditOrderItem from '@/views/EditOrderItem';
+import MyAccount from '@/views/MyAccount';
 
 Vue.use(Router);
 export const router = new Router({
@@ -30,6 +31,11 @@ export const router = new Router({
             path: "/login",
             name: "login",
             component: Login
+        },
+        {
+            path: "/account",
+            name: "account",
+            component: MyAccount
         }
     ]
 });

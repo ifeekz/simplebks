@@ -31,7 +31,23 @@ class AuthMiddleware {
         .json({ message: "Invalid Authentication Credentials" });
     }
 
+    req.user = seller;
+
     next();
+  }
+
+  async validateRequiredAccountBodyFields(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    if (req.body && req.body.seller_city && req.body.seller_state) {
+      next();
+    } else {
+      res
+        .status(400)
+        .send({ error: `Missing required fields seller_city and seller_state` });
+    }
   }
 }
 

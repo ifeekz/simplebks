@@ -1,28 +1,25 @@
 <template>
   <div class="row">
-    <div class="col-md-8 mx-auto">
+    <div class="col-md-10 mx-auto">
       <h4>My Orders</h4>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
             <tr>
               <th>Order Id</th>
-              <th>Product Name</th>
-              <th>Ship. Limit Date</th>
+              <th>Product Category</th>
               <th>Price</th>
-              <th>Freight Value</th>
+              <th>Product Id</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in orders" :key="index">
-              <td>{{ item.order_id }}</td>
-              <td></td>
-              <td>{{ item.shipping_limit_date }}</td>
-              <td>{{ item.price }}</td>
-              <td>{{ item.freight_value }}</td>
               <td>
-                <a :href="'/order_items/' + item.order_id"></a>
+                <a :href="'/order_items/' + item.id">{{ item.id }}</a>
               </td>
+              <td>{{ item.product_category }}</td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.product_id }}</td>
             </tr>
           </tbody>
         </table>
@@ -43,7 +40,9 @@ export default {
     getOrderItems() {
       const limit = this.$route.query.limit
       const offset = this.$route.query.offset
-      OrderService.getAll(limit, offset)
+      const sort = this.$route.query.sort
+      
+      OrderService.getAll(limit, offset, sort)
         .then((response) => {
           this.orders = response.data.data;
           console.log(response.data);

@@ -7,20 +7,22 @@ const log: debug.IDebugger = debug("app:orders-controller");
 class OrdersController {
   async listOrders(req: express.Request, res: express.Response) {
     const limit = !req.query.limit ? 20 : Number(req.query.limit);
-    const offet = !req.query.limit ? 0 : Number(req.query.offest);
-    const orders = await ordersService.list(limit, offet);
-    console.log('orders: ', orders)
-    res.status(200).send(orders);
+    const offet = !req.query.offset ? 0 : Number(req.query.offset);
+    const sort = !req.query.sort ? 'shipping_limit_date' : req.query.sort;
+    
+    const orders = await ordersService.list(req.user.seller_id, limit, offet);
+    return res.status(200).send(orders);
   }
 
   async getOrderById(req: express.Request, res: express.Response) {
-    const order = await ordersService.readById(req.params.orderId);
-    res.status(200).send(order);
-  }
+    try {
+      const order = await ordersService.readById(req.params.id);
+      return res.status(200).send(order);
 
-  async createOrder(req: express.Request, res: express.Response) {
-    const orderId = await ordersService.create(req.body);
-    res.status(201).send({ id: orderId });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ status: false, message: "Something went wrong: " + error });
+    }
   }
 
   async updateOrder(req: express.Request, res: express.Response) {
@@ -31,7 +33,7 @@ class OrdersController {
   }
 
   async deleteOrder(req: express.Request, res: express.Response) {
-    log(await ordersService.deleteById(req.params.orderId));
+    log(await ordersService.deleteById(req.params.order_id));
     res.status(204).send(``);
   }
 }
