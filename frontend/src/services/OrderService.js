@@ -5,9 +5,9 @@ class OrderService {
   getAll(limit = 20, offset = 0, sort = "shipping_limit_date") {
     limit = (limit > 100) ? 100 : limit
     return http.get(
-        `/order_items?limit=${limit}&offset=${offset}&sort=${sort}`, 
-        { headers: AuthHeader }
-      );
+      `/order_items?limit=${limit}&offset=${offset}&sort=${sort}`,
+      { headers: AuthHeader }
+    );
   }
   get(order_id) {
     return http.get(`/order_items/${order_id}`, { headers: AuthHeader });

@@ -102,8 +102,17 @@ class OrdersService extends DbManager implements OrdersInterface {
       });
   }
 
-  async updateById(resource: OrderDto) {
-    return OrdersDao.updateOrderById(resource);
+  async updateById(order: OrderDto) {
+    this.orders.updateOne(
+      { order_id: order.order_id },
+      {
+        $set: {
+          shipping_limit_date: order.shipping_limit_date,
+          price: order.price,
+          freight_value: order.freight_value,
+        },
+      }
+    );
   }
 
   async deleteById(resourceId: string) {
